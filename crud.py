@@ -32,6 +32,12 @@ class CrudProducts():
 
         return result_object
 
+    def commit_changes(self, stmt):
+        with engine.connect() as conn:
+            result = conn.execute(stmt)
+        
+        return result
+
     def create(self, creation_object):
         stmt = (
             insert(self.Product).
@@ -39,10 +45,7 @@ class CrudProducts():
                    marca=creation_object["marca"], descricao=creation_object["descricao"], desconto=creation_object["desconto"])
         )
 
-        with engine.connect() as conn:
-            result = conn.execute(stmt)
-
-        return result
+        return self.commit_changes(stmt)
 
     def get_all(self):
         records = self.session.query(self.Product).all()
@@ -66,17 +69,12 @@ class CrudProducts():
                    marca=record["marca"], descricao=record["descricao"], desconto=record["desconto"])
         )
 
-        with engine.connect() as conn:
-            result = conn.execute(stmt)
-        
-        return result
+        return self.commit_changes(stmt)
 
     def delete_by_id(self, id_produto):
         stmt = (
             delete(self.Product).
             where(self.Product.id_produto == id_produto)
         )
-        with engine.connect() as conn:
-            result = conn.execute(stmt)
 
-        return result
+        return self.commit_changes(stmt)
