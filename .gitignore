@@ -122,8 +122,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-.dmypy.json
+.dmypy.jsons
 dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Megadados
+secrets.py
