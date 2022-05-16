@@ -1,3 +1,13 @@
+# *********************************************************************************#
+##################################### Credentials #####################################
+# *********************************************************************************#
+
+from decouple import config
+USER = config('Insert Your Username')
+PASSWORD = config('Insert Your Password')
+
+# *********************************************************************************#
+
 from traceback import print_tb
 from fastapi import FastAPI, Query, Path, Body, Header, HTTPException
 from enum import Enum
