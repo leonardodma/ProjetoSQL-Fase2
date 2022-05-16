@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field, HttpUrl
 from fastapi.encoders import jsonable_encoder
 from uuid import UUID
 
+from sqlalchemy import except_
+
 from crud import *
 crud_projects = CrudProducts()
 crud_carts = CrudCarts()
@@ -24,7 +26,7 @@ class ProductsIn(BaseModel):
     desconto: float = Field(None, ge=0, le=1)
     marca: Optional[str] = Field(None, max_length=45)
     descricao: Optional[str] = Field(None, max_length=150)
-    
+
 
 class ProductsInOptional(BaseModel):
     nome: Optional[str] = Field(None, max_length=45)
@@ -33,7 +35,7 @@ class ProductsInOptional(BaseModel):
     desconto: Optional[float] = Field(None, ge=0, le=1)
     marca: Optional[str] = Field(None, max_length=45)
     descricao: Optional[str] = Field(None, max_length=150)
-    
+
 
 @app.get("/products/", tags=["Produto"])
 async def get_all_products():
@@ -53,6 +55,8 @@ async def get_product(
         raise HTTPException(status_code=404, detail="Product not found")
 
 # Create itens
+
+
 @app.post("/products/", tags=["Produto"])
 async def create_product(
     product: ProductsIn = Body(
@@ -83,8 +87,12 @@ async def create_product(
         })
 ):
     json_produto = jsonable_encoder(product)
-    crud_projects.create(json_produto)
-    return {"message": "success"}
+
+    try:
+        crud_projects.create(json_produto)
+        return {"message": "success"}
+    except:
+        raise HTTPException(status_code=400, detail="Wrong parameters.")
 
 
 # Replace itens
@@ -125,7 +133,7 @@ async def replace_product(
 
     except:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
 
 # Delete data
 @app.delete("/products/{id_produto}", tags=["Produto"])
@@ -133,7 +141,7 @@ async def delete_product(
     *,
     id_produto: int = Path(..., title="The ID of the product to get", ge=1),
 ):
-    
+
     try:
         crud_projects.delete_by_id(id_produto)
         return {"message": "success"}
@@ -144,8 +152,160 @@ async def delete_product(
 # *********************************************************************************#
 ##################################### Carrinho #####################################
 # *********************************************************************************#
+class CartIn(BaseModel):
+    id_usuario: Optional[int] = Field(None, ge=1)
 
+
+# Puxa lista de todos os carrinhos e seus donos
+@app.get("/cart/", tags=["Carrinho"])
+async def get_all_carts():
+    data = crud_carts.get_all()
+    return {"carrinho": data}
+
+
+@app.get("/cart/{id_carrinho}", tags=["Carrinho"])
+async def get_product(
+    *,
+    id_carrinho: int = Path(..., title="The ID of the cart to get", ge=1)
+):
+    try:
+        data = crud_carts.get_by_id(id_carrinho)
+        return {"carrinho": data}
+    except:
+        raise HTTPException(status_code=404, detail="Cart not found")
+
+
+@app.post("/cart/", tags=["Carrinho"])
+async def create_cart(
+    cart: CartIn = Body(
+        ...,
+        examples={
+            "normal": {
+                "summary": "A normal example",
+                "description": "To create a cart, you only need to pass the id of the user.",
+                "value": {
+                    "id_usuario": 1,
+                },
+            },
+        }
+    )
+):
+    json_carrinho = jsonable_encoder(cart)
+
+    try:
+        crud_carts.create(json_carrinho)
+        return {"message": "success"}
+    except:
+        raise HTTPException(status_code=400, detail="Wrong parameters.")
+
+
+@app.delete("/cart/{id_carrinho}", tags=["Carrinho"])
+async def delete_cart(
+    *,
+    id_carrinho: int = Path(..., title="The ID of the cart to get", ge=1)
+):
+
+    try:
+        crud_carts.delete(id_carrinho)
+        return {"message": "success"}
+    except:
+        raise HTTPException(status_code=404, detail="Cart not found")
 
 # *********************************************************************************#
 ################################ Produto Carrinho ##################################
 # *********************************************************************************#
+class CartProductIn(BaseModel):
+    id_carrinho: int = Field(None, ge=1)
+    id_produto: int = Field(None, ge=1)
+    quantidade: int = Field(..., ge=1)
+
+
+class Quantity(BaseModel):
+    quantidade: int = Field(..., ge=1)
+
+
+# Puxa lista de todos os carrinhos, produtos e quantidades
+@app.get("/cart_product/", tags=["Carrinho Produto"])
+async def get_all_carts():
+    data = crud_carts_products.get_all()
+    return {"carrinho_produto": data}
+
+
+@app.get("/cart_product/{id_carrinho}", tags=["Carrinho Produto"])
+async def get_cart_products(
+    *,
+    id_carrinho: int = Path(..., title="The ID of the cart to get", ge=1)
+):
+    try:
+        data = crud_carts_products.get_by_id(id_carrinho)
+        return {"carrinho_produto": data}
+    except:
+        raise HTTPException(status_code=404, detail="Cart not found")
+
+
+@app.post("/cart_product/", tags=["Carrinho Produto"])
+async def create_cart(
+    cart_product: CartProductIn = Body(
+        ...,
+        examples={
+            "normal": {
+                "summary": "A normal example",
+                "description": "A **normal** example to create insert a product into a cart.",
+                "value": {
+                    "id_carrinho": 1,
+                    "id_produto": 1,
+                    "quantidade": 3
+                },
+            },
+        }
+    )
+):
+    json_cart_product = jsonable_encoder(cart_product)
+
+    try:
+        crud_carts_products.create(json_cart_product)
+        return {"message": "success"}
+    except:
+        raise HTTPException(status_code=400, detail="Wrong parameters.")
+
+
+@app.patch("/cart/{id_carrinho}/{id_produto}", tags=["Carrinho Produto"])
+async def update_cart_product(
+    *,
+    id_carrinho: int = Path(..., title="The ID of the cart to get", ge=1),
+    id_produto: int = Path(..., title="The ID of the product to get", ge=1),
+    quantidade: Quantity = Body(
+        ...,
+        examples={
+            "normal": {
+                "summary": "A normal example",
+                "description": "A **normal** request to update a quantity of a product in a cart.",
+                "value": {
+                    "quantidade": 5
+                },
+            }
+        })
+):
+
+    try:
+        qtd = jsonable_encoder(quantidade)["quantidade"]
+        crud_carts_products.update_by_id(id_carrinho, id_produto, qtd)
+        return {"message": "success"}
+    except:
+        raise HTTPException(
+            status_code=404, detail="Cart and Product association not found")
+
+
+@app.delete("/cart/{id_carrinho}/{id_produto}", tags=["Carrinho Produto"])
+async def delete_cart_product(
+    *,
+    id_carrinho: int = Path(..., title="The ID of the cart to get", ge=1),
+    id_produto: int = Path(..., title="The ID of the product to get", ge=1)
+
+):
+    try:
+        crud_carts_products.delete_by_id(id_carrinho, id_produto)
+        return {"message": "success"}
+    except:
+        raise HTTPException(
+            status_code=404, detail="Cart and Product association not found")

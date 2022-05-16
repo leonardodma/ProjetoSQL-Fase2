@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS mercado.carrinho_produto ;
 CREATE TABLE IF NOT EXISTS mercado.carrinho_produto (
   id_carrinho INT NOT NULL,
   id_produto INT NOT NULL,
-  quantidade FLOAT NOT NULL,
+  quantidade INT NOT NULL,
   PRIMARY KEY (id_carrinho, id_produto),
   INDEX fk_id_produto_idx (id_produto ASC) VISIBLE,
   CONSTRAINT fk_id_carrinho

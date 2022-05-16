@@ -41,8 +41,12 @@ class CrudProducts():
     def create(self, creation_object):
         stmt = (
             insert(self.Product).
-            values(nome=creation_object["nome"], preco=creation_object["preco"], categoria=creation_object["categoria"],
-                   marca=creation_object["marca"], descricao=creation_object["descricao"], desconto=creation_object["desconto"])
+            values(nome=creation_object["nome"],
+                   preco=creation_object["preco"],
+                   categoria=creation_object["categoria"],
+                   marca=creation_object["marca"],
+                   descricao=creation_object["descricao"],
+                   desconto=creation_object["desconto"])
         )
 
         return commit_changes(stmt)
@@ -67,8 +71,12 @@ class CrudProducts():
         stmt = (
             update(self.Product).
             where(self.Product.id_produto == id_produto).
-            values(nome=record["nome"], preco=record["preco"], categoria=record["categoria"],
-                   marca=record["marca"], descricao=record["descricao"], desconto=record["desconto"])
+            values(nome=record["nome"], 
+                   preco=record["preco"], 
+                   categoria=record["categoria"],
+                   marca=record["marca"], 
+                   descricao=record["descricao"], 
+                   esconto=record["desconto"])
         )
 
         return commit_changes(stmt)
@@ -134,7 +142,8 @@ class CrudCartsProducts():
         stmt = (
             insert(self.CartProduct).
             values(id_carrinho=creation_object["id_carrinho"],
-                   id_produto=creation_object["id_produto"], quantidade=creation_object["quantidade"])
+                   id_produto=creation_object["id_produto"], 
+                   quantidade=creation_object["quantidade"])
         )
 
         return commit_changes(stmt)
