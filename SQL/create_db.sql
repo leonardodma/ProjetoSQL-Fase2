@@ -29,9 +29,9 @@ CREATE TABLE IF NOT EXISTS mercado.produto (
   nome VARCHAR(45) NOT NULL,
   preco FLOAT NOT NULL,
   categoria VARCHAR(45) NOT NULL,
+  desconto FLOAT NOT NULL,
   marca VARCHAR(45) NULL,
   descricao VARCHAR(100) NULL,
-  desconto FLOAT NULL,
   PRIMARY KEY (id_produto));
 
 -- -----------------------------------------------------

@@ -7,9 +7,9 @@ INSERT INTO carrinho VALUES (3, 2);
 INSERT INTO carrinho VALUES (4, 3);
 
 -- PRODUTO
-INSERT INTO produto VALUES (1, "creme de avelã", "30.0", "doces", "Nutella", "pote com 650g", NULL);
-INSERT INTO produto VALUES (2, "macarrão", "2.0", "massas", "Aurora", "pacote com 500g", NULL);
-INSERT INTO produto VALUES (3, "refrigerante", "10.0", "bebidas", "Coca-Cola", "garrafa pet de 2L", NULL);
+INSERT INTO produto VALUES (1, "creme de avelã", "30.0", "doces", 0.0, "Nutella", "pote com 650g");
+INSERT INTO produto VALUES (2, "macarrão", "2.0", "massas", 0.0, "Aurora", "pacote com 500g");
+INSERT INTO produto VALUES (3, "refrigerante", "10.0", "bebidas", 0.0, "Coca-Cola", "garrafa pet de 2L");
 
 -- PRODUTO CARRINHO
 INSERT INTO carrinho_produto VALUES (1, 1, 1);
