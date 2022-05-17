@@ -1,11 +1,14 @@
+import os
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, insert, delete, update, and_
-from secrets import *
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Cria Engine
 engine = create_engine(
-    f'mysql+pymysql://{user}:{password}@localhost/mercado')
+    f'mysql+pymysql://{os.getenv("USER")}:{os.getenv("PASSWORD")}@localhost/mercado')
 
 
 def query2object(query_records):
