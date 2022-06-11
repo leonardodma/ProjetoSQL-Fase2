@@ -7,8 +7,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Cria Engine
-engine = create_engine(
-    f'mysql+pymysql://{os.getenv("USER")}:{os.getenv("PASSWORD")}@localhost/mercado')
+""" engine = create_engine(
+    f'mysql+pymysql://{os.getenv("USER")}:{os.getenv("PASSWORD")}@localhost/mercado') """
+
+engine = create_engine(f'sqlite:///./app/SQL/mercado.db')
 
 
 def query2object(query_records):
@@ -74,11 +76,11 @@ class CrudProducts():
         stmt = (
             update(self.Product).
             where(self.Product.id_produto == id_produto).
-            values(nome=record["nome"], 
-                   preco=record["preco"], 
+            values(nome=record["nome"],
+                   preco=record["preco"],
                    categoria=record["categoria"],
-                   marca=record["marca"], 
-                   descricao=record["descricao"], 
+                   marca=record["marca"],
+                   descricao=record["descricao"],
                    esconto=record["desconto"])
         )
 
@@ -145,7 +147,7 @@ class CrudCartsProducts():
         stmt = (
             insert(self.CartProduct).
             values(id_carrinho=creation_object["id_carrinho"],
-                   id_produto=creation_object["id_produto"], 
+                   id_produto=creation_object["id_produto"],
                    quantidade=creation_object["quantidade"])
         )
 

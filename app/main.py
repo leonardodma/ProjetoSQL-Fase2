@@ -8,7 +8,7 @@ from uuid import UUID
 
 from sqlalchemy import except_
 
-from crud import *
+from .crud import *
 crud_projects = CrudProducts()
 crud_carts = CrudCarts()
 crud_carts_products = CrudCartsProducts()

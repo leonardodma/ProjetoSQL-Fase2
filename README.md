@@ -16,3 +16,8 @@ Por fim, rote a programa com:
 python -m uvicorn main:app --reload
 ```
 Acesse  [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) para fazer o teste da aplicação!
+
+
+# Docker
+docker build -t leonardodma/fastapi-image .
+docker run --name mycontainer -p 127.0.0.1:8000:80 leonardodma/fastapi-image
